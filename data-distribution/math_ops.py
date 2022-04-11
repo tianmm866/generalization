@@ -54,8 +54,23 @@ def inverse_modulus_continuity(f, dim, eps, Nx=1000, save_iters=False):
     
 
 def cdist(x, y, metric='euclidean'):
+    '''
+    X是测试集，y是训练集
+    num_1：平方项，测试集的数量，num_2训练集的数量,
+    点乘扩展成一个num_1(测试集长度)xnum2（训练集长度）的矩阵，其中，每一行的元素均相同，都是图片像素点的平方和
+
+    dist_2 ：平方项，构造一个[测试集长度，训练集长度]的真实矩阵，其中每行的值对应一个训练集图片的像素平方和
+
+    dist_3：-2ab选项，构造一个[测试集长度，训练集长度]的真实矩阵，
+    np.dot为点积，内积，向量做内积，矩阵做矩阵乘法
+    这里需要注意的是一维矩阵和一维向量的区别，一维向量的shape是(5, ), 而一维矩阵的shape是(5, 1), 若两个参数a和b都是一维向量则是计算的点积，但是当其中有一个是矩阵时（包括一维矩阵），dot便进行矩阵乘法运算，同时若有个参数为向量，会自动转换为一维矩阵进行计算。
+    测试集和训练集做矩阵相乘【1000，784】X[784,200]=【1000，200】
+
+    dists:最后结果，平方的结果，返回训练集和测试集之间的距离
+    '''
     dists = None
     if metric == 'euclidean':
+        # 压缩列，就是将每个图片的784个像素点的值都加到一起，keepdim = True保持维度不变
         num_1, num_2 = x.shape[0], y.shape[0]
         dist_1 = np.sum(np.square(x), axis=1, keepdims=True) * np.ones(num_2)
         dist_2 = np.ones([num_1, 1]) * np.sum(np.square(y), axis=1)
